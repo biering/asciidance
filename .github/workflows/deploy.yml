@@ -21,14 +21,21 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm ci
       - name: Build library
         run: npm run build
-      - name: Copy files for GitHub Pages
+      - name: Install React app dependencies
         run: |
-          cp dist/index.js .
-          cp dist/index.d.ts .
+          cd examples/asciidance-react
+          npm ci
+      - name: Build React app
+        run: |
+          cd examples/asciidance-react
+          npm run build
+      - name: Copy React app build to root
+        run: |
+          cp -r examples/asciidance-react/dist/* .
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
