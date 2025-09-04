@@ -56,50 +56,12 @@
       text-decoration: underline;
     }
 
-    .controls {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      display: flex;
-      gap: 10px;
-      z-index: 100;
-    }
-
-    .btn {
-      background: rgba(145, 164, 180, 0.1);
-      border: 1px solid rgba(145, 164, 180, 0.3);
-      color: #91a4b4;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 12px;
-      transition: all 0.2s;
-    }
-
-    .btn:hover {
-      background: rgba(145, 164, 180, 0.2);
-      color: #ffffff;
-    }
-
-    .btn.active {
-      background: rgba(145, 164, 180, 0.3);
-      color: #ffffff;
-    }
-
     @media (max-width: 768px) {
       .info {
         top: 10px;
         left: 10px;
         right: 10px;
         max-width: none;
-      }
-
-      .controls {
-        bottom: 10px;
-        left: 10px;
-        right: 10px;
-        justify-content: center;
       }
     }
   </style>
@@ -114,11 +76,6 @@
   </div>
 
   <canvas id="ascii-canvas"></canvas>
-
-  <div class="controls">
-    <button class="btn" id="pause-btn">Pause</button>
-    <button class="btn" id="reset-btn">Reset</button>
-  </div>
 
   <script src="./dist/index.js"></script>
   <script>
