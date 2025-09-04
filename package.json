@@ -1,16 +1,16 @@
 {
   "name": "asciidance",
   "version": "0.0.0",
-  "description": "A starter for creating a TypeScript package.",
+  "description": "A beautiful ASCII art animation library with customizable noise patterns and effects.",
   "type": "module",
   "license": "MIT",
-  "homepage": "https://github.com/author/library#readme",
+  "homepage": "https://biering.github.io/asciidance",
   "bugs": {
-    "url": "https://github.com/author/library/issues"
+    "url": "https://github.com/biering/asciidance/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cbiering/tsdown-starter.git"
+    "url": "git+https://github.com/biering/asciidance.git"
   },
   "author": "Christoph Biering <business@cbiering.com>",
   "files": [
