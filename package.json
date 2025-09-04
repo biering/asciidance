@@ -1,6 +1,6 @@
 {
   "name": "asciidance",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A beautiful ASCII art animation library with customizable noise patterns and effects.",
   "type": "module",
   "license": "MIT",
