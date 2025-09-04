@@ -77,8 +77,8 @@
 
   <canvas id="ascii-canvas"></canvas>
 
-  <script src="./dist/index.js"></script>
   <script type="module">
+    import { AsciiField } from './dist/index.js';
     const canvas = document.getElementById('ascii-canvas');
 
     const asciiField = new AsciiField(canvas);
