@@ -1,4 +1,5 @@
-import { expect, test, describe, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
+
 import { AsciiDance, DEFAULTS } from '../src'
 
 // Mock canvas for testing
@@ -42,7 +43,7 @@ describe('AsciiDance', () => {
       bg: '#000000',
       fg: '#ffffff',
       fontPx: 16,
-      speed: 0.02
+      speed: 0.02,
     }
 
     const field = new AsciiDance(mockCanvas, customOptions)
@@ -80,7 +81,7 @@ describe('AsciiDance', () => {
     field.update({
       bg: '#ff0000',
       speed: 0.05,
-      fontPx: 20
+      fontPx: 20,
     })
 
     const options = field.getOptions()
@@ -107,9 +108,11 @@ describe('AsciiDance', () => {
   test('should throw error when canvas context is unavailable', () => {
     // Mock canvas without 2D context
     const canvasWithoutContext = {
-      getContext: () => null
+      getContext: () => null,
     } as unknown as HTMLCanvasElement
 
-    expect(() => new AsciiDance(canvasWithoutContext)).toThrow('2D context unavailable')
+    expect(() => new AsciiDance(canvasWithoutContext)).toThrow(
+      '2D context unavailable',
+    )
   })
 })

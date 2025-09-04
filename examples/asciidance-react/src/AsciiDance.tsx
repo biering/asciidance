@@ -1,6 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 
-import { AsciiDance as AsciiDanceEngine, type AsciiDanceOptions, DEFAULTS } from '../../../src'
+import {
+  AsciiDance as AsciiDanceEngine,
+  type AsciiDanceOptions,
+  DEFAULTS,
+} from '../../../src'
 
 export type ReactAsciiProps = Partial<AsciiDanceOptions> &
   React.HTMLAttributes<HTMLCanvasElement>
@@ -28,7 +32,13 @@ export default function AsciiDanceView({ style, ...opts }: ReactAsciiProps) {
   return (
     <canvas
       ref={ref}
-      style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', ...style }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        ...style,
+      }}
       aria-hidden
     />
   )

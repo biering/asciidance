@@ -1,0 +1,9 @@
+coverage
+node_modules
+tailwind.config.ts
+.nuxt
+.vscode
+.vercel
+pnpm-lock.yaml
+.output
+dist
