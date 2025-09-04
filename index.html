@@ -81,7 +81,15 @@
     import { AsciiField } from './dist/index.js';
     const canvas = document.getElementById('ascii-canvas');
 
-    const asciiField = new AsciiField(canvas);
+    const asciiField = new AsciiField(canvas, {
+      gamma: 0.9,
+      wobbleAmp: 32,
+      wobbleFreq: 0.2,
+      driftAmp: 2,
+      plateauSteps: 21,
+      lacunarity: 10,
+      autoLevel: true,
+    });
 
     // Start the animation
     asciiField.start();
