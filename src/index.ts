@@ -1,6 +1,6 @@
 export type SizeMode = 'window' | 'element'
 
-export interface AsciiFieldOptions {
+export interface AsciiDanceOptions {
   // Look
   bg: string
   fg: string
@@ -40,7 +40,7 @@ export interface AsciiFieldOptions {
   sizeMode: SizeMode // "window" or "element"
 }
 
-export const DEFAULTS: AsciiFieldOptions = {
+export const DEFAULTS: AsciiDanceOptions = {
   bg: '#0a1118',
   fg: '#91a4b4',
   palette: ' .,:;=+*#%@',
@@ -74,10 +74,10 @@ export const DEFAULTS: AsciiFieldOptions = {
   sizeMode: 'window',
 }
 
-export class AsciiField {
+export class AsciiDance {
   private canvas: HTMLCanvasElement
   private ctx: CanvasRenderingContext2D
-  private opts: AsciiFieldOptions
+  private opts: AsciiDanceOptions
   private dpr = 1
   private raf = 0
   private prefersReduced = false
@@ -90,7 +90,7 @@ export class AsciiField {
 
   constructor(
     canvas: HTMLCanvasElement,
-    options: Partial<AsciiFieldOptions> = {},
+    options: Partial<AsciiDanceOptions> = {},
   ) {
     this.canvas = canvas
     const ctx = canvas.getContext('2d', { alpha: false })
@@ -139,7 +139,7 @@ export class AsciiField {
   }
 
   /** Update options at runtime */
-  update(next: Partial<AsciiFieldOptions>) {
+  update(next: Partial<AsciiDanceOptions>) {
     const beforeFont = this.opts.fontPx
     const beforePalette = this.opts.palette
     this.opts = { ...this.opts, ...next }
@@ -159,7 +159,7 @@ export class AsciiField {
   }
 
   /** Expose current options (read-only) */
-  getOptions(): Readonly<AsciiFieldOptions> {
+  getOptions(): Readonly<AsciiDanceOptions> {
     return this.opts
   }
 

@@ -24,9 +24,9 @@ A beautiful ASCII art animation library with customizable noise patterns and eff
 <canvas id="ascii-canvas"></canvas>
 <script src="./index.js"></script>
 <script>
-    const canvas = document.getElementById('ascii-canvas');
-    const asciiField = new AsciiField(canvas);
-    asciiField.start();
+  const canvas = document.getElementById('ascii-canvas')
+  const asciiField = new AsciiField(canvas)
+  asciiField.start()
 </script>
 ```
 
@@ -36,26 +36,28 @@ A beautiful ASCII art animation library with customizable noise patterns and eff
 <canvas id="ascii-canvas"></canvas>
 <script src="./index.js"></script>
 <script>
-    const canvas = document.getElementById('ascii-canvas');
-    const asciiField = new AsciiField(canvas, {
-        bg: '#000000',
-        fg: '#00ff00',
-        palette: ' .:-=+*#%@',
-        speed: 0.02,
-        fontPx: 14
-    });
-    asciiField.start();
+  const canvas = document.getElementById('ascii-canvas')
+  const asciiField = new AsciiField(canvas, {
+    bg: '#000000',
+    fg: '#00ff00',
+    palette: ' .:-=+*#%@',
+    speed: 0.02,
+    fontPx: 14,
+  })
+  asciiField.start()
 </script>
 ```
 
 ### API
 
 #### Constructor
+
 ```typescript
 new AsciiField(canvas: HTMLCanvasElement, options?: Partial<AsciiFieldOptions>)
 ```
 
 #### Methods
+
 - `start()` - Start the animation loop
 - `stop()` - Stop the animation loop
 - `destroy()` - Clean up and destroy the instance

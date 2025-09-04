@@ -1,17 +1,21 @@
 import React, { useEffect, useRef } from 'react'
 
-import { AsciiField, AsciiFieldOptions, DEFAULTS } from 'asciidance'
+import {
+  AsciiDance as AsciiDanceEngine,
+  type AsciiDanceOptions,
+  DEFAULTS,
+} from '../../../src'
 
-export type ReactAsciiProps = Partial<AsciiFieldOptions> &
+export type ReactAsciiProps = Partial<AsciiDanceOptions> &
   React.HTMLAttributes<HTMLCanvasElement>
 
-export default function AsciiFieldCanvas({ style, ...opts }: ReactAsciiProps) {
+export default function AsciiDanceView({ style, ...opts }: ReactAsciiProps) {
   const ref = useRef<HTMLCanvasElement | null>(null)
-  const engineRef = useRef<AsciiField | null>(null)
+  const engineRef = useRef<AsciiDanceEngine | null>(null)
 
   useEffect(() => {
     const el = ref.current!
-    engineRef.current = new AsciiField(el, {
+    engineRef.current = new AsciiDanceEngine(el, {
       ...DEFAULTS,
       sizeMode: 'element',
       ...opts,
@@ -28,7 +32,13 @@ export default function AsciiFieldCanvas({ style, ...opts }: ReactAsciiProps) {
   return (
     <canvas
       ref={ref}
-      style={{ position: 'fixed', inset: 0, width: '100%', height: '100%' }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        ...style,
+      }}
       aria-hidden
     />
   )
