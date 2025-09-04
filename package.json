@@ -31,7 +31,7 @@
     "dev": "tsdown --watch",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "release": "bumpp && npm publish"
+    "release": "bumpp && npm publish",
   },
   "devDependencies": {
     "@types/node": "^22.15.17",
