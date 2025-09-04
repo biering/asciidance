@@ -78,10 +78,10 @@
   <canvas id="ascii-canvas"></canvas>
 
   <script type="module">
-    import { AsciiField } from './dist/index.js';
+    import { AsciiDance } from './dist/index.js';
     const canvas = document.getElementById('ascii-canvas');
 
-    const asciiField = new AsciiField(canvas, {
+    const asciiDance = new AsciiDance(canvas, {
       gamma: 0.9,
       wobbleAmp: 32,
       wobbleFreq: 0.2,
@@ -92,11 +92,11 @@
     });
 
     // Start the animation
-    asciiField.start();
+    asciiDance.start();
 
     // Handle window resize
     window.addEventListener('resize', () => {
-      asciiField.resize();
+      asciiDance.resize();
     });
   </script>
 </body>
