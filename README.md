@@ -2,9 +2,11 @@
 
 A beautiful ASCII art animation library with customizable noise patterns and effects.
 
+![asciidance](https://github.com/user-attachments/assets/4c84b03b-9c11-41c4-8bbd-8a964ab4ecae)
+
 ## Live Demo
 
-🎬 **[View Live Demo on GitHub Pages](https://cbiering.github.io/asciidance)**
+🎬 **[View Live Demo on GitHub Pages](https://ascii.dance)**
 
 ## Features
 
