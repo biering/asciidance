@@ -7,14 +7,10 @@ settings:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       '@trivago/prettier-plugin-sort-imports':
         specifier: ^5.2.2
         version: 5.2.2(prettier@3.8.1)
-      prettier:
-        specifier: ^3.6.2
-        version: 3.8.1
-    devDependencies:
       '@types/node':
         specifier: ^22.15.17
         version: 22.19.15
@@ -27,6 +23,9 @@ importers:
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0(canvas@3.2.1)
+      prettier:
+        specifier: ^3.6.2
+        version: 3.8.1
       tsdown:
         specifier: ^0.11.9
         version: 0.11.13(typescript@5.9.3)
