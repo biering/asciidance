@@ -21,25 +21,30 @@ jobs:
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          registry-url: 'https://registry.npmjs.org'
-          scope: '@chryb'
-          cache: 'npm'
+          registry-url: "https://registry.npmjs.org"
+          scope: "@chryb"
+          cache: "pnpm"
+          cache-dependency-path: "pnpm-lock.yaml"
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       - name: Typecheck & test
         run: |
-          npm run typecheck
-          npm test --silent
+          pnpm run typecheck
+          pnpm test --silent
       - name: Build
-        run: npm run build
+        run: pnpm run build
       # Choose your bump strategy. Here we auto-bump PATCH on every push to main.
       # You can change "patch" to "minor" or "major", or wire in logic later.
       - name: Bump version (patch), commit & tag
-        run: npx bumpp minor -y --commit --tag --push
+        run: pnpm exec bumpp minor -y --commit --tag --push
       - name: Skip publish if this version already exists on npm
         id: check
         run: |
