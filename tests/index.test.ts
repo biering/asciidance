@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 import { AsciiDance, DEFAULTS } from '../src'
 
@@ -103,6 +103,29 @@ describe('AsciiDance', () => {
 
     // Should not throw when destroying
     expect(() => field.destroy()).not.toThrow()
+  })
+
+  test('should not leak resize listeners across start/stop cycles', () => {
+    const addSpy = vi.spyOn(window, 'addEventListener')
+    const removeSpy = vi.spyOn(window, 'removeEventListener')
+    const field = new AsciiDance(mockCanvas, { sizeMode: 'window' })
+
+    field.start()
+    field.stop()
+    field.start()
+    field.stop()
+
+    const addResizeCalls = addSpy.mock.calls.filter(
+      (call) => call[0] === 'resize',
+    )
+    const removeResizeCalls = removeSpy.mock.calls.filter(
+      (call) => call[0] === 'resize',
+    )
+    expect(addResizeCalls).toHaveLength(2)
+    expect(removeResizeCalls).toHaveLength(2)
+
+    addSpy.mockRestore()
+    removeSpy.mockRestore()
   })
 
   test('should throw error when canvas context is unavailable', () => {

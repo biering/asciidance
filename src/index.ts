@@ -86,7 +86,11 @@ export class AsciiDance {
   private glyphW = 8
   private glyphH = 16
   private started = false
+  private activeSizeMode?: SizeMode
   private resizeObs?: ResizeObserver
+  private warpX = 0
+  private warpY = 0
+  private toneWeight = 0
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -111,12 +115,7 @@ export class AsciiDance {
   start() {
     if (this.started) return
     this.started = true
-    if (this.opts.sizeMode === 'window') {
-      window.addEventListener('resize', this.onResize, { passive: true })
-    } else if ('ResizeObserver' in window) {
-      this.resizeObs = new ResizeObserver(() => this.resize())
-      this.resizeObs.observe(this.canvas)
-    }
+    this.attachResizeWatcher(this.opts.sizeMode)
     this.raf = requestAnimationFrame((t) => this.render(t))
   }
 
@@ -124,12 +123,7 @@ export class AsciiDance {
   stop() {
     this.started = false
     cancelAnimationFrame(this.raf)
-    if (this.opts.sizeMode === 'window') {
-      window.removeEventListener('resize', this.onResize)
-    } else {
-      this.resizeObs?.disconnect()
-      this.resizeObs = undefined
-    }
+    this.detachResizeWatcher()
   }
 
   /** Destroy and clean up listeners */
@@ -142,6 +136,7 @@ export class AsciiDance {
   update(next: Partial<AsciiDanceOptions>) {
     const beforeFont = this.opts.fontPx
     const beforePalette = this.opts.palette
+    const prevSizeMode = this.activeSizeMode ?? this.opts.sizeMode
     this.opts = { ...this.opts, ...next }
     if (
       beforeFont !== this.opts.fontPx ||
@@ -150,12 +145,42 @@ export class AsciiDance {
       this.setFont()
       this.measureGlyphs()
     }
-    if (next.sizeMode && next.sizeMode !== this.opts.sizeMode) this.onResize()
+    const sizeModeChanged =
+      typeof next.sizeMode === 'string' && next.sizeMode !== prevSizeMode
+    if (this.started && sizeModeChanged) {
+      this.detachResizeWatcher()
+      this.attachResizeWatcher(this.opts.sizeMode)
+    }
+    if (sizeModeChanged) this.onResize()
     // reset autoLevel bounds if toggled
     if (typeof next.autoLevel === 'boolean') {
       this.lo = 1
       this.hi = 0
     }
+  }
+
+  /** Set up resize listener/observer based on current size mode */
+  private attachResizeWatcher(mode: SizeMode) {
+    this.activeSizeMode = mode
+    if (mode === 'window') {
+      window.addEventListener('resize', this.onResize, { passive: true })
+      return
+    }
+    if ('ResizeObserver' in window) {
+      this.resizeObs = new ResizeObserver(() => this.resize())
+      this.resizeObs.observe(this.canvas)
+    }
+  }
+
+  /** Tear down any resize listeners to avoid leaks when switching modes */
+  private detachResizeWatcher() {
+    if (this.activeSizeMode === 'window') {
+      window.removeEventListener('resize', this.onResize)
+    } else {
+      this.resizeObs?.disconnect()
+    }
+    this.resizeObs = undefined
+    this.activeSizeMode = undefined
   }
 
   /** Expose current options (read-only) */
@@ -234,24 +259,22 @@ export class AsciiDance {
   private fbm2D(
     x: number,
     y: number,
-    o: {
-      seed: number
-      cellSize: number
-      octaves: number
-      lacunarity: number
-      gain: number
-    },
+    seed: number,
+    cellSize: number,
+    octaves: number,
+    lacunarity: number,
+    gain: number,
   ) {
     let amp = 1,
       freq = 1,
       sum = 0,
       norm = 0
-    for (let i = 0; i < o.octaves; i++) {
-      const cs = o.cellSize / freq
-      sum += this.valueNoise2D(x, y, o.seed + i * 17, cs) * amp
+    for (let i = 0; i < octaves; i++) {
+      const cs = cellSize / freq
+      sum += this.valueNoise2D(x, y, seed + i * 17, cs) * amp
       norm += amp
-      amp *= o.gain
-      freq *= o.lacunarity
+      amp *= gain
+      freq *= lacunarity
     }
     return sum / Math.max(1e-6, norm) // [0,1]
   }
@@ -264,26 +287,35 @@ export class AsciiDance {
     freq: number,
     seed: number,
     cellSize: number,
-  ) {
-    if (amp === 0) return { x, y }
-    const sx = this.fbm2D(x * freq + t * 20, y * freq, {
-      seed: seed ^ 0x9e37,
+  ): void {
+    if (amp === 0) {
+      this.warpX = x
+      this.warpY = y
+      return
+    }
+    const sx = this.fbm2D(
+      x * freq + t * 20,
+      y * freq,
+      seed ^ 0x9e37,
       cellSize,
-      octaves: 1,
-      lacunarity: 2,
-      gain: 0.5,
-    })
-    const sy = this.fbm2D(x * freq, y * freq + t * 17, {
-      seed: seed ^ 0x85eb,
+      1,
+      2,
+      0.5,
+    )
+    const sy = this.fbm2D(
+      x * freq,
+      y * freq + t * 17,
+      seed ^ 0x85eb,
       cellSize,
-      octaves: 1,
-      lacunarity: 2,
-      gain: 0.5,
-    })
-    return { x: x + (sx - 0.5) * 2 * amp, y: y + (sy - 0.5) * 2 * amp }
+      1,
+      2,
+      0.5,
+    )
+    this.warpX = x + (sx - 0.5) * 2 * amp
+    this.warpY = y + (sy - 0.5) * 2 * amp
   }
 
-  private tonemap(val01: number) {
+  private tonemapIndex(val01: number, paletteLastIdx: number) {
     const o = this.opts
     let v = val01
 
@@ -310,8 +342,8 @@ export class AsciiDance {
     v = Math.max(0, Math.min(1, v))
     if (o.invert) v = 1 - v
 
-    const idx = Math.floor(v * (o.palette.length - 1))
-    return { char: o.palette[idx], weight: v }
+    this.toneWeight = v
+    return Math.floor(v * paletteLastIdx)
   }
 
   // ---------- internal: render ----------
@@ -329,18 +361,20 @@ export class AsciiDance {
 
     ctx.fillStyle = o.fg
     const timeFactor = this.prefersReduced ? 0 : o.speed * 60
+    const palette = o.palette
+    const paletteLastIdx = palette.length - 1
 
     for (let y = 0; y < cssH; y += this.glyphH) {
       const wobble =
         o.wobbleAmp * Math.sin(2 * Math.PI * o.wobbleFreq * t + y * 0.0125)
       const drift = o.driftAmp * t
+      const phaseT = t + Math.sin(y * 0.002) * 0.35
 
       for (let x = 0; x < cssW; x += this.glyphW) {
         const wx = (x + wobble + drift) * o.scale
         const wy = y * o.scale
 
-        const phaseT = t + Math.sin(y * 0.002) * 0.35
-        const warped = this.domainWarp(
+        this.domainWarp(
           wx + Math.sin(phaseT) * 0.3,
           wy + Math.cos(phaseT * 0.8) * 0.3,
           t,
@@ -351,20 +385,18 @@ export class AsciiDance {
         )
 
         const v = this.fbm2D(
-          warped.x + t * timeFactor * 0.12,
-          warped.y - t * timeFactor * 0.1,
-          {
-            seed: o.seed,
-            cellSize: o.cellSize,
-            octaves: o.octaves,
-            lacunarity: o.lacunarity,
-            gain: o.gain,
-          },
+          this.warpX + t * timeFactor * 0.12,
+          this.warpY - t * timeFactor * 0.1,
+          o.seed,
+          o.cellSize,
+          o.octaves,
+          o.lacunarity,
+          o.gain,
         )
 
-        const { char, weight } = this.tonemap(v)
-        ctx.globalAlpha = o.opacityBase + o.opacityVar * weight
-        ctx.fillText(char, x, y)
+        const charIdx = this.tonemapIndex(v, paletteLastIdx)
+        ctx.globalAlpha = o.opacityBase + o.opacityVar * this.toneWeight
+        ctx.fillText(palette[charIdx], x, y)
       }
     }
 
@@ -372,3 +404,7 @@ export class AsciiDance {
     this.raf = requestAnimationFrame((t2) => this.render(t2))
   }
 }
+
+export { AsciiDance as AsciiField }
+export type AsciiFieldOptions = AsciiDanceOptions
+export default AsciiDance
