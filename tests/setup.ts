@@ -1,5 +1,3 @@
-import { createCanvas } from 'canvas'
-
 // Mock window.matchMedia for jsdom
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -19,8 +17,21 @@ Object.defineProperty(window, 'matchMedia', {
 Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
   value: function (contextType: string, contextAttributes?: any) {
     if (contextType === '2d') {
-      const canvas = createCanvas(800, 600)
-      return canvas.getContext('2d')
+      const mockCtx = {
+        canvas: this,
+        fillStyle: '#000000',
+        globalAlpha: 1,
+        font: '12px monospace',
+        textBaseline: 'top',
+        setTransform: () => {},
+        fillRect: () => {},
+        fillText: () => {},
+        measureText: (text: string) =>
+          ({
+            width: Math.max(1, text.length * 8),
+          }) as TextMetrics,
+      }
+      return mockCtx as unknown as CanvasRenderingContext2D
     }
     return null
   },

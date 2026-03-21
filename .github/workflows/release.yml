@@ -29,10 +29,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          registry-url: "https://registry.npmjs.org"
-          scope: "@chryb"
-          cache: "pnpm"
-          cache-dependency-path: "pnpm-lock.yaml"
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@chryb'
+          cache: 'pnpm'
+          cache-dependency-path: 'pnpm-lock.yaml'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Typecheck & test
