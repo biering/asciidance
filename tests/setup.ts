@@ -5,11 +5,11 @@ Object.defineProperty(window, 'matchMedia', {
     matches: false,
     media: query,
     onchange: null,
-    addListener: () => {}, // deprecated
-    removeListener: () => {}, // deprecated
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => {},
+    addListener: () => { }, // deprecated
+    removeListener: () => { }, // deprecated
+    addEventListener: () => { },
+    removeEventListener: () => { },
+    dispatchEvent: () => { },
   }),
 })
 
@@ -23,9 +23,9 @@ Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
         globalAlpha: 1,
         font: '12px monospace',
         textBaseline: 'top',
-        setTransform: () => {},
-        fillRect: () => {},
-        fillText: () => {},
+        setTransform: () => { },
+        fillRect: () => { },
+        fillText: () => { },
         measureText: (text: string) =>
           ({
             width: Math.max(1, text.length * 8),
@@ -52,6 +52,6 @@ Object.defineProperty(HTMLCanvasElement.prototype, 'height', {
     return 600
   },
   set: function (value: number) {
-    // Mock implementation
+    // Mock
   },
 })
